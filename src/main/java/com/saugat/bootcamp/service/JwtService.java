@@ -12,6 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class JwtService {
@@ -25,11 +26,15 @@ public class JwtService {
 
     public String generateToken(User user){
        User existingUser =  userRepository.findUserByEmail(user.getEmail());
+       List<String> roles = List.of("ADMIN");
 //       if(existingUser == null){
 //           throw new ResourceNotFoundException("User not found");
 //       }
         return Jwts.builder()
                 .setSubject(user.getEmail())
+                .claim("roles", roles)
+                .issuer("www.saugatthapachhetri.com.np")
+                .audience().add("Saugat").and()
                 .setIssuedAt(Date.from(Instant.now()))
                 .setExpiration(Date.from(Instant.now().plus(1, ChronoUnit.DAYS)))
                 .signWith(Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS256)
